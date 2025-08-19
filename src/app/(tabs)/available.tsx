@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import {
   AnimatedToolRoot,
+  SkeletonToolRoot,
   ToolAvailability,
   ToolName,
 } from "../../components/Tool";
@@ -41,14 +42,6 @@ export default function Available() {
     await borrowTool(selectedToolId, borrower, quantity);
   };
 
-  if (isLoading) {
-    return (
-      <Screen>
-        <ActivityIndicator />
-      </Screen>
-    );
-  }
-
   const selectedTool = tools.find((tool) => tool.id === selectedToolId);
   const availableQuantity = selectedTool
     ? selectedTool.stock - selectedTool.borrowed
@@ -70,13 +63,24 @@ export default function Available() {
         />
       </ModalWrapper>
       <Text style={styles.h2}>Disponibles</Text>
-      {tools.length === 0 ? (
-        <Text style={styles.emptyText}>No Tools available</Text>
+      {isLoading ? (
+        <>
+          <SkeletonToolRoot />
+          <SkeletonToolRoot />
+          <SkeletonToolRoot />
+          <SkeletonToolRoot />
+          <SkeletonToolRoot />
+        </>
       ) : (
         <FlatList
           style={styles.flatList}
           keyExtractor={(item) => String(item.id)}
           data={tools}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>
+              No hay herramientas disponibles
+            </Text>
+          }
           renderItem={({ item, index }: { item: ToolInfo; index: number }) => {
             const available = item.stock - item.borrowed;
             return (

@@ -6,7 +6,11 @@ import {
   Text,
   View,
 } from "react-native";
-import { AnimatedToolRoot, ToolName } from "../../components/Tool";
+import {
+  AnimatedToolRoot,
+  SkeletonToolRoot,
+  ToolName,
+} from "../../components/Tool";
 import { LogInIcon } from "../../components/Icons";
 import { BorrowedTool } from "../../types";
 import Screen from "../../containers/Screen";
@@ -38,14 +42,6 @@ export default function Borrowed() {
     await returnTool(selectedToolId, borrowerId);
   };
 
-  if (isLoading) {
-    return (
-      <Screen>
-        <ActivityIndicator />
-      </Screen>
-    );
-  }
-
   return (
     <Screen>
       <ModalWrapper visible={openModal} handleClose={handleCloseModal}>
@@ -56,13 +52,22 @@ export default function Borrowed() {
         />
       </ModalWrapper>
       <Text style={styles.h2}>Prestadas</Text>
-      {borrowedTools.length === 0 ? (
-        <Text style={styles.emptyText}>No hay herramientas prestadas</Text>
+      {isLoading ? (
+        <>
+          <SkeletonToolRoot />
+          <SkeletonToolRoot />
+          <SkeletonToolRoot />
+          <SkeletonToolRoot />
+          <SkeletonToolRoot />
+        </>
       ) : (
         <FlatList
           style={styles.flatList}
           keyExtractor={(item) => String(item.id)}
           data={borrowedTools}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>No hay herramientas prestadas</Text>
+          }
           renderItem={({
             item,
             index,

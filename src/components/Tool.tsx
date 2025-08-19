@@ -45,6 +45,33 @@ export const AnimatedToolRoot = ({
   );
 };
 
+export const SkeletonToolRoot = () => {
+  const opacity = useRef(new Animated.Value(0.5)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0.5,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
+  }, [opacity]);
+
+  return (
+    <View style={styles.toolRoot}>
+      <Animated.View style={{ ...styles.skeleton, opacity }} />
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   toolRoot: {
     width: "100%",
@@ -84,5 +111,11 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 12,
     marginBottom: 8,
+  },
+  skeleton: {
+    width: "100%",
+    height: 50,
+    borderRadius: 12,
+    backgroundColor: "#eee",
   },
 });
