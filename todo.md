@@ -1,1 +1,0 @@
-- Busqueda y paginado de herramientas
