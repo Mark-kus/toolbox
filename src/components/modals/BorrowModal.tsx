@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import QuantityButtons from "../QuantityButtons";
 
 const BorrowModal = ({
   handleClose,
@@ -58,39 +59,12 @@ const BorrowModal = ({
           placeholder="Cantidad"
           style={styles.quantityInput}
         />
-        <View style={styles.quantityButtons}>
-          <Pressable
-            onPress={() =>
-              handleQuantityChange(
-                Math.max(1, parseInt(quantity || "2") - 1).toString(),
-              )
-            }
-            disabled={parseInt(quantity) <= 1}
-            style={{
-              ...styles.quantityButton,
-              ...(parseInt(quantity) <= 1 && styles.buttonDisabled),
-            }}
-          >
-            <Text style={styles.quantityButtonText}>-</Text>
-          </Pressable>
-          <Pressable
-            onPress={() =>
-              handleQuantityChange(
-                Math.min(
-                  quantityLimit,
-                  parseInt(quantity || "0") + 1,
-                ).toString(),
-              )
-            }
-            disabled={parseInt(quantity) >= quantityLimit}
-            style={{
-              ...styles.quantityButton,
-              ...(parseInt(quantity) >= quantityLimit && styles.buttonDisabled),
-            }}
-          >
-            <Text style={styles.quantityButtonText}>+</Text>
-          </Pressable>
-        </View>
+        <QuantityButtons
+          quantity={quantity}
+          maxQuantity={quantityLimit}
+          minQuantity={1}
+          handleChange={handleQuantityChange}
+        />
       </View>
       <Text style={styles.textError}>{errors.quantity}</Text>
       <Pressable
@@ -193,26 +167,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#e2e8f0",
     marginRight: 8,
-  },
-  quantityButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 6,
-  },
-  quantityButton: {
-    width: 46,
-    height: 46,
-    backgroundColor: "#016992",
-    borderRadius: 4,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  quantityButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-    lineHeight: 46,
   },
   textError: {
     textAlign: "left",

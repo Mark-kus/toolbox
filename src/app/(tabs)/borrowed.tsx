@@ -36,15 +36,22 @@ export default function Borrowed() {
     setOpenModal(false);
   };
 
-  const handleSubmitReturn = async (borrowerId: number) => {
+  const handleSubmitReturn = async (borrowerId: number, quantity: number) => {
     if (!selectedToolId) return;
     handleCloseModal();
-    await returnTool(selectedToolId, borrowerId);
+    await returnTool(selectedToolId, borrowerId, quantity);
   };
+
+  const selectedTool = borrowedTools.find((tool) => tool.id === selectedToolId);
 
   return (
     <Screen>
       <ModalWrapper visible={openModal} handleClose={handleCloseModal}>
+        <View style={styles.borrowInfo}>
+          <ToolName
+            name={`Devolviendo ${selectedTool ? selectedTool.name : "Herramienta"}`}
+          />
+        </View>
         <ReturnModal
           handleClose={handleCloseModal}
           handleSubmit={handleSubmitReturn}
@@ -103,6 +110,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 16,
+  },
+  borrowInfo: {
+    backgroundColor: "white",
+    padding: 24,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "90%",
+    borderRadius: 16,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    marginBottom: 8,
   },
   emptyText: {
     fontSize: 16,

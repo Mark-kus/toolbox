@@ -20,4 +20,5 @@ export interface ToolEntity extends ToolData {
 export interface Borrower {
   id: number;
   name: string;
+  borrowCount: number;
 }

@@ -3,12 +3,14 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 import { useToolBorrowers } from "../../hooks/useToolBorrowers";
 import { useEffect, useState } from "react";
 import { Borrower } from "../../types";
 import { Picker } from "@react-native-picker/picker";
+import QuantityButtons from "../QuantityButtons";
 
 const ReturnModal = ({
   handleClose,
@@ -16,13 +18,15 @@ const ReturnModal = ({
   toolId,
 }: {
   handleClose: () => void;
-  handleSubmit: (borrowerId: number) => void;
+  handleSubmit: (borrowerId: number, quantity: number) => void;
   toolId: number;
 }) => {
   const { toolBorrowers, isLoading } = useToolBorrowers(toolId);
   const [selectedBorrower, setSelectedBorrower] = useState<
     Borrower | undefined
   >();
+  const [quantity, setQuantity] = useState("1");
+  const [errors, setErrors] = useState({ quantity: "" });
 
   useEffect(() => {
     if (toolBorrowers) setSelectedBorrower(toolBorrowers[0]);
@@ -32,6 +36,37 @@ const ReturnModal = ({
     setSelectedBorrower(
       toolBorrowers.find((b) => b.id === borrowerId) || toolBorrowers[0],
     );
+    setQuantity("1");
+  };
+
+  const maxQuantity = selectedBorrower?.borrowCount;
+
+  const handleQuantityChange = (value: string) => {
+    setQuantity(value);
+
+    if (value === "") {
+      setErrors({ ...errors, quantity: "Debe devolverse al menos una unidad" });
+      return;
+    }
+
+    const parsedValue = parseInt(value);
+    if (maxQuantity && parsedValue > maxQuantity) {
+      setErrors({
+        ...errors,
+        quantity: `No se puede devolver más de lo que se pidió`,
+      });
+      return;
+    }
+
+    if (!/^[1-9]\d*$/.test(value)) {
+      setErrors({
+        ...errors,
+        quantity: "La cantidad solo puede ser un numero entero",
+      });
+      return;
+    }
+
+    setErrors({ ...errors, quantity: "" });
   };
 
   return (
@@ -53,13 +88,39 @@ const ReturnModal = ({
                 borrower.name.charAt(0).toUpperCase() + borrower.name.slice(1)
               }
               value={borrower.id}
+              color={selectedBorrower?.id === borrower.id ? "#016992" : "#000"}
             />
           ))}
         </Picker>
       )}
+      {selectedBorrower && (
+        <Text style={styles.borrowerInfo}>
+          {selectedBorrower.name.charAt(0).toUpperCase() +
+            selectedBorrower.name.slice(1)}{" "}
+          tiene {selectedBorrower.borrowCount} unidades por devolver
+        </Text>
+      )}
+      <View style={styles.quantityContainer}>
+        <TextInput
+          value={quantity}
+          onChangeText={handleQuantityChange}
+          keyboardType="numeric"
+          placeholder="Cantidad"
+          style={styles.quantityInput}
+        />
+        <QuantityButtons
+          quantity={quantity}
+          maxQuantity={maxQuantity}
+          minQuantity={1}
+          handleChange={handleQuantityChange}
+        />
+      </View>
+      <Text style={styles.textError}>{errors.quantity}</Text>
+
       <Pressable
         onPress={() => {
-          if (selectedBorrower) handleSubmit(selectedBorrower.id);
+          if (selectedBorrower)
+            handleSubmit(selectedBorrower.id, Number(quantity));
         }}
         disabled={isLoading}
         style={{
@@ -96,6 +157,23 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 8,
   },
+  quantityContainer: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  quantityInput: {
+    flex: 1,
+    padding: 12,
+    fontSize: 16,
+    color: "#2d3748",
+    borderRadius: 8,
+    backgroundColor: "#f7fafc",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    marginRight: 8,
+  },
   selectContainer: {
     width: "100%",
   },
@@ -129,5 +207,17 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     backgroundColor: "#0169928a",
+  },
+  borrowerInfo: {
+    width: "100%",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 16,
+    color: "#4a5568",
+    textAlign: "center",
+  },
+  textError: {
+    textAlign: "left",
+    color: "#da3e3ede",
   },
 });

@@ -20,7 +20,11 @@ export type ToolsContextType = {
   updateTool: (tool: ToolEntity) => Promise<void>;
   createTool: (tool: ToolData) => Promise<void>;
   deleteTool: (toolId: number) => Promise<void>;
-  returnTool: (toolId: number, borrowerId: number) => Promise<void>;
+  returnTool: (
+    toolId: number,
+    borrowerId: number,
+    quantity: number,
+  ) => Promise<void>;
 };
 
 export const ToolsContext = createContext<ToolsContextType | null>(null);
@@ -113,15 +117,16 @@ export function ToolsProvider({ children }: { children: React.ReactNode }) {
   );
 
   const returnTool = useCallback(
-    async (toolId: number, borrowerId: number) => {
+    async (toolId: number, borrowerId: number, quantity: number) => {
       setIsLoading(true);
       try {
-        // Borra el pedido actual
+        // Borra el pedido actual la cantidad de veces especificada
         await supabaseClient
           .from("borrower_tool")
           .delete()
           .eq("tool_id", toolId)
-          .eq("borrower_id", borrowerId);
+          .eq("borrower_id", borrowerId)
+          .limit(quantity);
 
         // Check if the borrower has more tools
         const { count } = await supabaseClient

@@ -13,6 +13,7 @@ import Screen from "../containers/Screen";
 import { ToolsContext, ToolsContextType } from "../contexts/ToolsContext";
 import { ToolData } from "../types";
 import { useTools } from "../hooks/useTools";
+import QuantityButtons from "../components/QuantityButtons";
 
 export default function Detail() {
   const { id } = useLocalSearchParams();
@@ -70,7 +71,7 @@ export default function Detail() {
       return;
     }
 
-    if (!/^[1-9]\d*$/.test(value)) {
+    if (!/^[0-9]\d*$/.test(value)) {
       setErrors({
         ...errors,
         quantity: "Stock solo puede ser un numero entero",
@@ -190,7 +191,7 @@ export default function Detail() {
             onChangeText={(text) =>
               setFormData((prev) => ({ ...prev, name: text }))
             }
-            placeholder="Martillo"
+            placeholder="Herramienta"
           />
           {!!errors.name && <Text style={styles.textError}>{errors.name}</Text>}
         </View>
@@ -202,32 +203,14 @@ export default function Detail() {
               value={String(formData.stock)}
               onChangeText={handleQuantityChange}
               keyboardType="numeric"
-              placeholder="0"
+              placeholder="Cantidad"
             />
-            <View style={styles.quantityButtons}>
-              <Pressable
-                onPress={() => {
-                  const newValue = Math.max(0, Number(formData.stock) - 1);
-                  setFormData((prev) => ({ ...prev, stock: String(newValue) }));
-                }}
-                disabled={Number(formData.stock) <= 0}
-                style={{
-                  ...styles.quantityButton,
-                  ...(Number(formData.stock) <= 0 && styles.buttonDisabled),
-                }}
-              >
-                <Text style={styles.quantityButtonText}>-</Text>
-              </Pressable>
-              <Pressable
-                onPress={() => {
-                  const newValue = Number(formData.stock) + 1;
-                  setFormData((prev) => ({ ...prev, stock: String(newValue) }));
-                }}
-                style={styles.quantityButton}
-              >
-                <Text style={styles.quantityButtonText}>+</Text>
-              </Pressable>
-            </View>
+            <QuantityButtons
+              quantity={formData.stock}
+              minQuantity={0}
+              handleChange={(value) => handleQuantityChange(value)}
+              disabledMinus={Number(formData.stock) <= 0}
+            />
           </View>
           {!!errors.quantity && (
             <Text style={styles.textError}>{errors.quantity}</Text>
@@ -320,26 +303,6 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 4,
     marginRight: 8,
-  },
-  quantityButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 6,
-  },
-  quantityButton: {
-    width: 46,
-    height: 46,
-    backgroundColor: "#016992",
-    borderRadius: 4,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  quantityButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-    lineHeight: 46,
   },
   button: {
     flex: 1,

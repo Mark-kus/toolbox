@@ -9,12 +9,20 @@ export const useToolBorrowers = (toolId: number) => {
   const fetchToolBorrowers = useCallback(async (toolId: number) => {
     setIsLoading(true);
     try {
-      const { data } = await supabaseClient
+      const { data: borrowData } = await supabaseClient
         .from("borrower_tool")
-        .select("borrower_id")
+        .select("borrower_id, tool_id")
         .eq("tool_id", toolId);
 
-      const ids = Array.from(new Set((data ?? []).map((i) => i.borrower_id)));
+      const borrowCounts = (borrowData ?? []).reduce(
+        (acc, curr) => {
+          acc[curr.borrower_id] = (acc[curr.borrower_id] || 0) + 1;
+          return acc;
+        },
+        {} as Record<number, number>,
+      );
+
+      const ids = Object.keys(borrowCounts).map(Number);
       if (ids.length === 0) {
         setToolBorrowers([]);
         return;
@@ -24,7 +32,15 @@ export const useToolBorrowers = (toolId: number) => {
         .from("borrowers")
         .select("*")
         .in("id", ids);
-      setToolBorrowers((borrowers as Borrower[]) ?? []);
+
+      const borrowersWithCount = (borrowers ?? []).map((borrower) => ({
+        ...borrower,
+        borrowCount: borrowCounts[borrower.id],
+      }));
+
+      setToolBorrowers(
+        borrowersWithCount as (Borrower & { borrowCount: number })[],
+      );
     } finally {
       setIsLoading(false);
     }
