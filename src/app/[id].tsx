@@ -6,7 +6,6 @@ import {
   View,
   StyleSheet,
   Pressable,
-  ActivityIndicator,
   Alert,
 } from "react-native";
 import Screen from "../containers/Screen";
@@ -14,6 +13,7 @@ import { ToolsContext, ToolsContextType } from "../contexts/ToolsContext";
 import { ToolData } from "../types";
 import { useTools } from "../hooks/useTools";
 import QuantityButtons from "../components/QuantityButtons";
+import { SkeletonToolRoot } from "../components/Tool";
 
 export default function Detail() {
   const { id } = useLocalSearchParams();
@@ -161,7 +161,24 @@ export default function Detail() {
   };
 
   if (isLoadingInitial) {
-    return <ActivityIndicator />;
+    return (
+      <Screen>
+        <SkeletonToolRoot />
+        <SkeletonToolRoot />
+        <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+          <SkeletonToolRoot
+            style={{
+              width: "48%",
+            }}
+          />
+          <SkeletonToolRoot
+            style={{
+              width: "48%",
+            }}
+          />
+        </View>
+      </Screen>
+    );
   }
 
   const isLoadingButton = isLoadingHook || isLoadingContext;
@@ -334,6 +351,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#920601ff",
   },
   buttonDisabled: {
-    backgroundColor: "#0169928a",
+    opacity: 0.6,
   },
 });

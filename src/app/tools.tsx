@@ -1,7 +1,12 @@
 import { Link, Stack } from "expo-router";
-import { StyleSheet, Pressable, View, ActivityIndicator } from "react-native";
+import { StyleSheet, Pressable, View } from "react-native";
 import Screen from "../containers/Screen";
-import { ToolRoot, ToolName, ToolStock } from "../components/Tool";
+import {
+  ToolRoot,
+  ToolName,
+  ToolStock,
+  SkeletonToolRoot,
+} from "../components/Tool";
 import { useContext } from "react";
 import { ToolsContext, ToolsContextType } from "../contexts/ToolsContext";
 import { PlusIcon } from "../components/Icons";
@@ -12,7 +17,20 @@ const Tools = () => {
   if (isLoading) {
     return (
       <ScreenWithStack>
-        <ActivityIndicator />
+        <View style={styles.grid}>
+          <SkeletonToolRoot style={styles.gridItem} />
+          <SkeletonToolRoot style={styles.gridItem} />
+          <SkeletonToolRoot style={styles.gridItem} />
+          <SkeletonToolRoot style={styles.gridItem} />
+          <SkeletonToolRoot style={styles.gridItem} />
+          <SkeletonToolRoot style={styles.gridItem} />
+          <SkeletonToolRoot style={styles.gridItem} />
+          <SkeletonToolRoot style={styles.gridItem} />
+          <SkeletonToolRoot style={styles.gridItem} />
+          <SkeletonToolRoot style={styles.gridItem} />
+          <SkeletonToolRoot style={styles.gridItem} />
+          <SkeletonToolRoot style={styles.gridItem} />
+        </View>
       </ScreenWithStack>
     );
   }

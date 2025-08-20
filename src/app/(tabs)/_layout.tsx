@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import { LogInIcon, LogOutIcon } from "../../components/Icons";
+import { Pressable } from "react-native";
 
 export default function TabsLayout() {
   return (
@@ -12,20 +13,29 @@ export default function TabsLayout() {
           shadowColor: "#000",
           shadowOffset: { width: 0, height: -2 },
           shadowOpacity: 0.1,
-          shadowRadius: 4,
           height: 80,
-          paddingTop: 8,
         },
         tabBarActiveTintColor: "#016992",
         tabBarInactiveTintColor: "#718096",
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 14,
           fontWeight: "600",
         },
+        tabBarButton: (props: any) => (
+          <Pressable
+            {...props}
+            android_ripple={{ radius: 60 }}
+            style={({ pressed }) => [
+              props.style,
+              { opacity: pressed ? 0.7 : 1 },
+              { paddingTop: 10 },
+            ]}
+          />
+        ),
       }}
     >
       <Tabs.Screen
-        name="available"
+        name="index"
         options={{
           title: "Disponibles",
           tabBarIcon: ({ color }) => <LogOutIcon color={color} />,

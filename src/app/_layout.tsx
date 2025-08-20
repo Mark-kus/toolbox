@@ -14,6 +14,7 @@ export default function Layout() {
             headerStyle: {
               backgroundColor: "#016992",
             },
+            animation: "slide_from_right",
             headerTintColor: "white",
             headerTitle: "Toolbox",
             headerRight: () => (

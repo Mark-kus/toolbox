@@ -50,6 +50,7 @@ const BorrowModal = ({
         onChangeText={setBorrower}
         placeholder="Nombre Completo"
         style={styles.input}
+        placeholderTextColor={"#a0aec0"}
       />
       <View style={styles.quantityContainer}>
         <TextInput
@@ -58,6 +59,7 @@ const BorrowModal = ({
           keyboardType="numeric"
           placeholder="Cantidad"
           style={styles.quantityInput}
+          placeholderTextColor={"#a0aec0"}
         />
         <QuantityButtons
           quantity={quantity}
@@ -138,7 +140,7 @@ const styles = StyleSheet.create({
     marginVertical: 12,
   },
   buttonDisabled: {
-    backgroundColor: "#0169928a",
+    opacity: 0.6,
   },
   input: {
     width: "100%",

@@ -67,7 +67,7 @@ const QuantityButtons = ({
 
 const styles = StyleSheet.create({
   buttonDisabled: {
-    backgroundColor: "#0169928a",
+    opacity: 0.6,
   },
   quantityButtons: {
     flexDirection: "row",

@@ -45,7 +45,7 @@ export const AnimatedToolRoot = ({
   );
 };
 
-export const SkeletonToolRoot = () => {
+export const SkeletonToolRoot = ({ style }: { style?: any }) => {
   const opacity = useRef(new Animated.Value(0.5)).current;
 
   useEffect(() => {
@@ -66,7 +66,7 @@ export const SkeletonToolRoot = () => {
   }, [opacity]);
 
   return (
-    <View style={styles.toolRoot}>
+    <View style={{ ...styles.toolRoot, ...style }}>
       <Animated.View style={{ ...styles.skeleton, opacity }} />
     </View>
   );

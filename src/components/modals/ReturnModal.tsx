@@ -1,5 +1,5 @@
 import {
-  ActivityIndicator,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { Borrower } from "../../types";
 import { Picker } from "@react-native-picker/picker";
 import QuantityButtons from "../QuantityButtons";
+import { SkeletonToolRoot } from "../Tool";
 
 const ReturnModal = ({
   handleClose,
@@ -71,15 +72,15 @@ const ReturnModal = ({
 
   return (
     <View style={styles.container}>
-      {!!isLoading ? (
-        <View style={styles.selectSkeleton}>
-          <ActivityIndicator />
-        </View>
+      {isLoading ? (
+        <SkeletonToolRoot />
       ) : (
         <Picker
           style={styles.selectContainer}
           selectedValue={selectedBorrower ? selectedBorrower.id : 0}
           onValueChange={handleSelect}
+          dropdownIconColor={"#a0aec0"}
+          mode="dropdown"
         >
           {toolBorrowers.map((borrower) => (
             <Picker.Item
@@ -88,18 +89,20 @@ const ReturnModal = ({
                 borrower.name.charAt(0).toUpperCase() + borrower.name.slice(1)
               }
               value={borrower.id}
-              color={selectedBorrower?.id === borrower.id ? "#016992" : "#000"}
+              color={"#4da5c1"}
             />
           ))}
         </Picker>
       )}
-      {selectedBorrower && (
-        <Text style={styles.borrowerInfo}>
-          {selectedBorrower.name.charAt(0).toUpperCase() +
-            selectedBorrower.name.slice(1)}{" "}
-          tiene {selectedBorrower.borrowCount} unidades por devolver
-        </Text>
-      )}
+      <Text style={styles.borrowerInfo}>
+        {selectedBorrower && (
+          <>
+            {selectedBorrower.name.charAt(0).toUpperCase() +
+              selectedBorrower.name.slice(1)}{" "}
+            tiene {selectedBorrower.borrowCount} unidades por devolver
+          </>
+        )}
+      </Text>
       <View style={styles.quantityContainer}>
         <TextInput
           value={quantity}
@@ -122,11 +125,12 @@ const ReturnModal = ({
           if (selectedBorrower)
             handleSubmit(selectedBorrower.id, Number(quantity));
         }}
-        disabled={isLoading}
+        disabled={isLoading || !selectedBorrower || !quantity}
         style={{
           ...styles.button,
           ...styles.buttonSubmit,
-          ...(isLoading && styles.buttonDisabled),
+          ...((isLoading || !selectedBorrower || !quantity) &&
+            styles.buttonDisabled),
         }}
       >
         <Text style={styles.textButton}>Devolver</Text>
@@ -176,11 +180,8 @@ const styles = StyleSheet.create({
   },
   selectContainer: {
     width: "100%",
-  },
-  selectSkeleton: {
-    width: "100%",
-    height: 216,
-    justifyContent: "center",
+    backgroundColor: "#f7fafc",
+    borderRadius: 8,
   },
   button: {
     width: "100%",
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
     marginVertical: 12,
   },
   buttonDisabled: {
-    backgroundColor: "#0169928a",
+    opacity: 0.6,
   },
   borrowerInfo: {
     width: "100%",
